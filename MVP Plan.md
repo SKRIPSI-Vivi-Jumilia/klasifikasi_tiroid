@@ -42,13 +42,13 @@ Fokus pada pengelolaan data (CRUD) dan kemudahan pencarian.
 
 ### Milestone 4: Dashboard, Admin & Pelaporan (Minggu 4)
 Penyelesaian fitur administrasi dan estetika akhir.
-- [ ] **Dashboard Utama (Beranda)**:
+- [x] **Dashboard Utama (Beranda)**:
     - Visualisasi statistik (Recharts): Jumlah kasus per kategori.
     - Widget ringkasan total data dan edukasi tiroid.
-- [ ] **Manajemen User (Admin Panel)**:
+- [x] **Manajemen User (Admin Panel)**:
     - Halaman daftar pengguna sistem.
     - Modal tambah user baru untuk tenaga medis tambahan.
-- [ ] **Fitur Pelaporan**:
+- [x] **Fitur Pelaporan**:
     - Optimasi halaman untuk cetak laporan (Print-friendly CSS).
     - Tombol "Cetak Hasil" pada setiap baris data pemeriksaan.
 

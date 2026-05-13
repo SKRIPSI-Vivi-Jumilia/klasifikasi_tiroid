@@ -145,8 +145,13 @@ export function DetailExaminationModal({ examination, isOpen, onClose }: DetailE
         </div>
 
         <DialogFooter className="bg-muted/50 p-6">
-          <Button variant="outline" onClick={onClose} className="rounded-xl">Tutup Detail</Button>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl">Cetak Laporan</Button>
+          <Button variant="outline" onClick={onClose} className="rounded-xl no-print">Tutup Detail</Button>
+          <Button 
+            className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl no-print"
+            onClick={() => window.print()}
+          >
+            Cetak Laporan
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

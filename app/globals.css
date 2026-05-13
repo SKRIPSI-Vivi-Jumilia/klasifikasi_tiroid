@@ -130,3 +130,12 @@
     @apply font-sans;
     }
 }
+
+@layer utilities {
+  @media print {
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+    body { background: white !important; color: black !important; }
+  }
+  .print-only { display: none; }
+}

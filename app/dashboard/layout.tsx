@@ -8,9 +8,13 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Sidebar />
+      <div className="no-print">
+        <Sidebar />
+      </div>
       <div className="flex flex-col">
-        <Header />
+        <div className="no-print">
+          <Header />
+        </div>
         <main className="flex-1 lg:ml-72 p-8">
           {children}
         </main>
