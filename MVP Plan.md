@@ -20,25 +20,25 @@ Membangun fondasi sistem yang aman dan struktur database.
 
 ### Milestone 2: Antarmuka Prediksi & Integrasi API (Minggu 2)
 Fokus pada pengalaman pengguna saat menginput data klinis.
-- [ ] **Form Input Medis**:
+- [x] **Form Input Medis**:
     - Pengembangan form numerik dengan validasi ketat (Zod).
     - Komponen UI untuk input parameter: TSH, T3, TT4, T4U, Umur, Jenis Kelamin.
-- [ ] **Integrasi API Klasifikasi**:
+- [x] **Integrasi API Klasifikasi**:
     - Pembuatan Server Action untuk memanggil model XGBoost (melalui API eksternal).
     - Implementasi *Skeleton Loading* saat menunggu hasil prediksi.
-- [ ] **Display Hasil Diagnosis**:
+- [x] **Display Hasil Diagnosis**:
     - Kartu hasil diagnosis dengan visualisasi *Confidence Level* (Progress bar/Circular).
     - Feedback visual instan (Normal = Hijau, Hiper/Hipo = Oranye/Merah).
 
 ### Milestone 3: Manajemen Data Pasien & Riwayat (Minggu 3)
 Fokus pada pengelolaan data (CRUD) dan kemudahan pencarian.
-- [ ] **Halaman Riwayat (Data Pasien)**:
+- [x] **Halaman Riwayat (Data Pasien)**:
     - Tabel interaktif menggunakan `@tanstack/react-table`.
     - Fitur **Pencarian** (berdasarkan nama) dan **Filter** (berdasarkan kategori diagnosis).
-- [ ] **Manajemen Pemeriksaan (CRUD)**:
+- [x] **Manajemen Pemeriksaan (CRUD)**:
     - Fitur Edit data pemeriksaan yang salah input.
     - Fitur Hapus data dengan modal konfirmasi.
-- [ ] **Detail Pemeriksaan**: Halaman/Modal khusus untuk melihat riwayat parameter klinis lengkap pasien.
+- [x] **Detail Pemeriksaan**: Halaman/Modal khusus untuk melihat riwayat parameter klinis lengkap pasien.
 
 ### Milestone 4: Dashboard, Admin & Pelaporan (Minggu 4)
 Penyelesaian fitur administrasi dan estetika akhir.
