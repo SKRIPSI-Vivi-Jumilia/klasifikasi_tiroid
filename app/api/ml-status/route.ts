@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 
 export async function GET() {
+  const mlApiUrl = process.env.ML_API_URL || 'http://127.0.0.1:5000'
   try {
-    const response = await fetch('http://127.0.0.1:5000/health', {
+    const response = await fetch(`${mlApiUrl}/health`, {
       method: 'GET',
       // Short timeout so the UI doesn't hang
       signal: AbortSignal.timeout(3000),

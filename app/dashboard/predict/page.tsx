@@ -5,15 +5,36 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { 
   StatusIcon, 
-  LeftToRightListDashIcon
+  LeftToRightListDashIcon,
+  WifiConnected01Icon,
+  WifiError01Icon
 } from '@hugeicons/core-free-icons'
 
 import { PredictionForm } from '@/components/prediction-form'
 import { PredictionResultDisplay } from '@/components/prediction-result'
 import { PredictionResult } from '@/app/actions/prediction'
 
+type ApiStatus = 'checking' | 'online' | 'offline'
+
 export default function PredictPage() {
   const [result, setResult] = React.useState<PredictionResult | null>(null)
+  const [apiStatus, setApiStatus] = React.useState<ApiStatus>('checking')
+
+  const checkApiStatus = React.useCallback(async () => {
+    try {
+      const res = await fetch('/api/ml-status', { cache: 'no-store' })
+      const data = await res.json()
+      setApiStatus(data.connected ? 'online' : 'offline')
+    } catch {
+      setApiStatus('offline')
+    }
+  }, [])
+
+  React.useEffect(() => {
+    checkApiStatus()
+    const interval = setInterval(checkApiStatus, 10_000)
+    return () => clearInterval(interval)
+  }, [checkApiStatus])
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-20">
@@ -41,6 +62,55 @@ export default function PredictPage() {
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-4"
         >
+          {/* Status API */}
+          <AnimatePresence mode="wait">
+            {apiStatus === 'checking' && (
+              <motion.div
+                key="checking"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-card border border-border/50 text-xs font-semibold text-muted-foreground shadow-sm"
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}
+                  className="h-3 w-3 border-2 border-muted-foreground border-t-transparent rounded-full"
+                />
+                Memeriksa Koneksi API...
+              </motion.div>
+            )}
+            {apiStatus === 'online' && (
+              <motion.div
+                key="online"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs font-semibold text-emerald-500 shadow-sm"
+              >
+                <motion.div
+                  animate={{ scale: [1, 1.4, 1] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                  className="h-2 w-2 rounded-full bg-emerald-500"
+                />
+                <HugeiconsIcon icon={WifiConnected01Icon} className="h-4 w-4" />
+                API Terhubung
+              </motion.div>
+            )}
+            {apiStatus === 'offline' && (
+              <motion.div
+                key="offline"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-xs font-semibold text-rose-500 shadow-sm animate-pulse"
+              >
+                <div className="h-2 w-2 rounded-full bg-rose-500" />
+                <HugeiconsIcon icon={WifiError01Icon} className="h-4 w-4" />
+                API Terputus
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
 
@@ -56,7 +126,7 @@ export default function PredictPage() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4 }}
               >
-                <PredictionForm onSuccess={setResult} />
+                <PredictionForm onSuccess={setResult} apiStatus={apiStatus} />
               </motion.div>
             ) : (
               <motion.div

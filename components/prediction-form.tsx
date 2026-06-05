@@ -41,32 +41,15 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
-interface PredictionFormProps {
-  onSuccess: (result: PredictionResult) => void
-}
-
 type ApiStatus = 'checking' | 'online' | 'offline'
 
-export function PredictionForm({ onSuccess }: PredictionFormProps) {
+interface PredictionFormProps {
+  onSuccess: (result: PredictionResult) => void
+  apiStatus: ApiStatus
+}
+
+export function PredictionForm({ onSuccess, apiStatus }: PredictionFormProps) {
   const [isPending, setIsPending] = React.useState(false)
-  const [apiStatus, setApiStatus] = React.useState<ApiStatus>('checking')
-
-  // Poll the ML API health endpoint every 10 seconds
-  const checkApiStatus = React.useCallback(async () => {
-    try {
-      const res = await fetch('/api/ml-status', { cache: 'no-store' })
-      const data = await res.json()
-      setApiStatus(data.connected ? 'online' : 'offline')
-    } catch {
-      setApiStatus('offline')
-    }
-  }, [])
-
-  React.useEffect(() => {
-    checkApiStatus()
-    const interval = setInterval(checkApiStatus, 10_000)
-    return () => clearInterval(interval)
-  }, [checkApiStatus])
 
   const {
     register,

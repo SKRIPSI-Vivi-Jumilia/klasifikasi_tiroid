@@ -22,9 +22,10 @@ export type PredictionResult = {
 export async function predictThyroid(data: PredictionData) {
   let diagnosis = 'Normal'
   let confidence = 0.95
+  const mlApiUrl = process.env.ML_API_URL || 'http://127.0.0.1:5000'
 
   try {
-    const response = await fetch('http://127.0.0.1:5000/predict', {
+    const response = await fetch(`${mlApiUrl}/predict`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -47,11 +48,26 @@ export async function predictThyroid(data: PredictionData) {
 
     const resData = await response.json()
     if (resData.error) {
+      console.error('Model Error response:', resData.error)
       return { error: `Model Error: ${resData.error}` }
     }
 
     diagnosis = resData.result // "Normal" | "Hipotiroid" | "Hipertiroid"
     confidence = resData.confidence
+
+    // Print output to terminal log as requested
+    console.log('=== DATA PREDIKSI DARI ML API ===')
+    console.log('Nama Pasien   :', data.nama_pasien)
+    console.log('Umur          :', data.umur)
+    console.log('Jenis Kelamin :', data.jenis_kelamin)
+    console.log('TSH           :', data.tsh)
+    console.log('T3            :', data.t3)
+    console.log('TT4           :', data.tt4)
+    console.log('FTI           :', data.fti)
+    console.log('---------------------------------')
+    console.log('Hasil Model   :', diagnosis)
+    console.log('Confidence    :', confidence)
+    console.log('=================================')
   } catch (apiErr) {
     console.error('Error connecting to Flask API:', apiErr)
     return { error: 'Gagal menghubungi server Machine Learning. Pastikan server BE ML aktif.' }

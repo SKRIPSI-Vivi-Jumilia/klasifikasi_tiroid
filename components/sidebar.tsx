@@ -18,7 +18,6 @@ const navigation = [
   { name: 'Beranda', href: '/dashboard', icon: DashboardCircleIcon },
   { name: 'Prediksi Baru', href: '/dashboard/predict', icon: MedicalFileIcon },
   { name: 'Riwayat Medis', href: '/dashboard/history', icon: Database01Icon },
-  { name: 'Pengaturan', href: '/dashboard/settings', icon: Settings02Icon },
 ]
 
 export function Sidebar() {
