@@ -32,8 +32,8 @@ export function DetailExaminationModal({ examination, isOpen, onClose }: DetailE
   if (!examination) return null
 
   const isNormal = examination.hasil_klasifikasi?.toLowerCase() === 'normal'
-  const isHypo = examination.hasil_klasifikasi?.toLowerCase().includes('hypo')
-  const isHyper = examination.hasil_klasifikasi?.toLowerCase().includes('hyper')
+  const isHypo = examination.hasil_klasifikasi?.toLowerCase().includes('hypo') || examination.hasil_klasifikasi?.toLowerCase().includes('hipo')
+  const isHyper = examination.hasil_klasifikasi?.toLowerCase().includes('hyper') || examination.hasil_klasifikasi?.toLowerCase().includes('hiper')
 
   const getColorClass = () => {
     if (isNormal) return 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20'

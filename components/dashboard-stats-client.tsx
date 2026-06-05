@@ -33,15 +33,15 @@ export function DashboardStatsClient({ stats }: DashboardStatsClientProps) {
 
   const pieData = [
     { name: 'Normal', value: categoryCounts.normal, color: '#10b981' },
-    { name: 'Hyperthyroid', value: categoryCounts.hyper, color: '#f59e0b' },
-    { name: 'Hypothyroid', value: categoryCounts.hypo, color: '#ef4444' },
+    { name: 'Hipertiroid', value: categoryCounts.hyper, color: '#ef4444' },
+    { name: 'Hipotiroid', value: categoryCounts.hypo, color: '#f59e0b' },
     { name: 'Lainnya', value: categoryCounts.other, color: '#6366f1' },
   ].filter(d => d.value > 0)
 
   const barData = [
     { name: 'Normal', count: categoryCounts.normal },
-    { name: 'Hyper', count: categoryCounts.hyper },
-    { name: 'Hypo', count: categoryCounts.hypo },
+    { name: 'Hipertiroid', count: categoryCounts.hyper },
+    { name: 'Hipotiroid', count: categoryCounts.hypo },
   ]
 
   return (
@@ -67,14 +67,14 @@ export function DashboardStatsClient({ stats }: DashboardStatsClientProps) {
           value={categoryCounts.hyper} 
           icon={Alert01Icon} 
           trend="Butuh Atensi" 
-          color="amber" 
+          color="rose" 
         />
         <StatCard 
           title="Hipotiroid" 
           value={categoryCounts.hypo} 
           icon={Alert01Icon} 
           trend="Butuh Atensi" 
-          color="rose" 
+          color="amber" 
         />
       </div>
 
@@ -96,7 +96,7 @@ export function DashboardStatsClient({ stats }: DashboardStatsClientProps) {
                 />
                 <Bar dataKey="count" radius={[8, 8, 0, 0]}>
                   {barData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={index === 0 ? '#10b981' : index === 1 ? '#f59e0b' : '#ef4444'} />
+                    <Cell key={`cell-${index}`} fill={index === 0 ? '#10b981' : index === 1 ? '#ef4444' : '#f59e0b'} />
                   ))}
                 </Bar>
               </BarChart>
@@ -169,7 +169,8 @@ export function DashboardStatsClient({ stats }: DashboardStatsClientProps) {
               <div className="flex items-center gap-4">
                 <div className="text-right mr-4">
                   <div className={`text-[10px] font-black uppercase tracking-widest ${
-                    exam.hasil_klasifikasi.toLowerCase() === 'normal' ? 'text-emerald-500' : 'text-rose-500'
+                    exam.hasil_klasifikasi.toLowerCase() === 'normal' ? 'text-emerald-500' :
+                    (exam.hasil_klasifikasi.toLowerCase().includes('hyper') || exam.hasil_klasifikasi.toLowerCase().includes('hiper')) ? 'text-rose-500' : 'text-amber-500'
                   }`}>
                     {exam.hasil_klasifikasi}
                   </div>

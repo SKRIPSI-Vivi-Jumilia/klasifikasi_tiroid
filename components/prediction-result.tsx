@@ -28,20 +28,20 @@ export function PredictionResultDisplay({ result, onReset }: PredictionResultDis
   if (!result) return null
 
   const isNormal = result.diagnosis.toLowerCase() === 'normal'
-  const isHypo = result.diagnosis.toLowerCase().includes('hypo')
-  const isHyper = result.diagnosis.toLowerCase().includes('hyper')
+  const isHypo = result.diagnosis.toLowerCase().includes('hypo') || result.diagnosis.toLowerCase().includes('hipo')
+  const isHyper = result.diagnosis.toLowerCase().includes('hyper') || result.diagnosis.toLowerCase().includes('hiper')
 
   const getColorClass = () => {
     if (isNormal) return 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5'
-    if (isHyper) return 'text-amber-500 border-amber-500/20 bg-amber-500/5'
-    if (isHypo) return 'text-rose-500 border-rose-500/20 bg-rose-500/5'
+    if (isHyper) return 'text-rose-500 border-rose-500/20 bg-rose-500/5'
+    if (isHypo) return 'text-amber-500 border-amber-500/20 bg-amber-500/5'
     return 'text-blue-500 border-blue-500/20 bg-blue-500/5'
   }
 
   const getGradient = () => {
     if (isNormal) return 'from-emerald-600/20 to-teal-600/20'
-    if (isHyper) return 'from-amber-600/20 to-orange-600/20'
-    if (isHypo) return 'from-rose-600/20 to-red-600/20'
+    if (isHyper) return 'from-rose-600/20 to-red-600/20'
+    if (isHypo) return 'from-amber-600/20 to-orange-600/20'
     return 'from-purple-600/20 to-blue-600/20'
   }
 

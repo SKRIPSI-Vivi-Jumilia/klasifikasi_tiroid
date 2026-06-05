@@ -31,8 +31,8 @@ export async function getDashboardStats() {
     examsData?.forEach(exam => {
       const result = exam.hasil_klasifikasi?.toLowerCase() || ''
       if (result === 'normal') categoryCounts.normal++
-      else if (result.includes('hyper')) categoryCounts.hyper++
-      else if (result.includes('hypo')) categoryCounts.hypo++
+      else if (result.includes('hyper') || result.includes('hiper')) categoryCounts.hyper++
+      else if (result.includes('hypo') || result.includes('hipo')) categoryCounts.hypo++
       else categoryCounts.other++
     })
 

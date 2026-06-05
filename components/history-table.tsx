@@ -92,8 +92,8 @@ export function HistoryTable({ data }: HistoryTableProps) {
         const value = row.getValue('hasil_klasifikasi') as string
         const lowerValue = value?.toLowerCase() || ''
         const isNormal = lowerValue === 'normal'
-        const isHyper = lowerValue.includes('hyper')
-        const isHypo = lowerValue.includes('hypo')
+        const isHyper = lowerValue.includes('hyper') || lowerValue.includes('hiper')
+        const isHypo = lowerValue.includes('hypo') || lowerValue.includes('hipo')
         
         let colorClass = 'text-blue-500 bg-blue-500/5 border-blue-500/20'
         if (isNormal) colorClass = 'text-emerald-500 bg-emerald-500/5 border-emerald-500/20'
@@ -236,8 +236,8 @@ export function HistoryTable({ data }: HistoryTableProps) {
             <DropdownMenuContent align="end" className="w-48 rounded-xl bg-card/80 backdrop-blur-xl border-border/50">
               <DropdownMenuItem onClick={() => table.getColumn('hasil_klasifikasi')?.setFilterValue('')}>Semua Diagnosis</DropdownMenuItem>
               <DropdownMenuItem onClick={() => table.getColumn('hasil_klasifikasi')?.setFilterValue('Normal')}>Normal</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => table.getColumn('hasil_klasifikasi')?.setFilterValue('Hyperthyroid')}>Hyperthyroid</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => table.getColumn('hasil_klasifikasi')?.setFilterValue('Hypothyroid')}>Hypothyroid</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => table.getColumn('hasil_klasifikasi')?.setFilterValue('Hipertiroid')}>Hipertiroid</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => table.getColumn('hasil_klasifikasi')?.setFilterValue('Hipotiroid')}>Hipotiroid</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           

@@ -20,20 +20,41 @@ export type PredictionResult = {
 }
 
 export async function predictThyroid(data: PredictionData) {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 2000))
-
-  // Mock logic for prediction (XGBoost placeholder)
-  // In a real scenario, you would fetch() your Python API here
   let diagnosis = 'Normal'
   let confidence = 0.95
 
-  if (data.tsh > 4.5) {
-    diagnosis = 'Hypothyroid'
-    confidence = 0.88
-  } else if (data.tsh < 0.4) {
-    diagnosis = 'Hyperthyroid'
-    confidence = 0.92
+  try {
+    const response = await fetch('http://127.0.0.1:5000/predict', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        age: data.umur,
+        sex: data.jenis_kelamin === 'L' ? 1 : 0,
+        TSH: data.tsh,
+        T3: data.t3,
+        TT4: data.tt4,
+        FTI: data.fti,
+      }),
+    })
+
+    if (!response.ok) {
+      const errText = await response.text()
+      console.error('Flask API error response:', errText)
+      return { error: 'Gagal memproses prediksi dari server Machine Learning' }
+    }
+
+    const resData = await response.json()
+    if (resData.error) {
+      return { error: `Model Error: ${resData.error}` }
+    }
+
+    diagnosis = resData.result // "Normal" | "Hipotiroid" | "Hipertiroid"
+    confidence = resData.confidence
+  } catch (apiErr) {
+    console.error('Error connecting to Flask API:', apiErr)
+    return { error: 'Gagal menghubungi server Machine Learning. Pastikan server BE ML aktif.' }
   }
 
   // Save to Supabase
