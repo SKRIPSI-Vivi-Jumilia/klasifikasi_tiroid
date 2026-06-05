@@ -36,10 +36,10 @@ export function DetailExaminationModal({ examination, isOpen, onClose }: DetailE
   const isHyper = examination.hasil_klasifikasi?.toLowerCase().includes('hyper')
 
   const getColorClass = () => {
-    if (isNormal) return 'text-emerald-500 bg-emerald-500/10'
-    if (isHyper) return 'text-amber-500 bg-amber-500/10'
-    if (isHypo) return 'text-rose-500 bg-rose-500/10'
-    return 'text-blue-500 bg-blue-500/10'
+    if (isNormal) return 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20'
+    if (isHyper) return 'text-rose-500 bg-rose-500/10 border-rose-500/20'
+    if (isHypo) return 'text-amber-500 bg-amber-500/10 border-amber-500/20'
+    return 'text-blue-500 bg-blue-500/10 border-blue-500/20'
   }
 
   const getIcon = () => {
@@ -118,7 +118,6 @@ export function DetailExaminationModal({ examination, isOpen, onClose }: DetailE
                   { label: 'TSH', value: examination.tsh, unit: 'mU/L' },
                   { label: 'T3', value: examination.t3, unit: 'nmol/L' },
                   { label: 'TT4', value: examination.tt4, unit: 'nmol/L' },
-                  { label: 'T4U', value: examination.t4u, unit: 'Ratio' },
                   { label: 'FTI', value: examination.fti, unit: 'Unit' },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-border/30">

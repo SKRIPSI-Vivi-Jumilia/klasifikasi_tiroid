@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { 
@@ -22,6 +23,8 @@ interface PredictionResultDisplayProps {
 }
 
 export function PredictionResultDisplay({ result, onReset }: PredictionResultDisplayProps) {
+  const router = useRouter()
+
   if (!result) return null
 
   const isNormal = result.diagnosis.toLowerCase() === 'normal'
@@ -124,6 +127,7 @@ export function PredictionResultDisplay({ result, onReset }: PredictionResultDis
                 Input Baru
               </Button>
               <Button 
+                onClick={() => router.push('/dashboard/history')}
                 className="flex-1 h-12 bg-purple-600 hover:bg-purple-700 text-white rounded-xl gap-2 shadow-lg shadow-purple-500/20"
               >
                 Detail Pasien

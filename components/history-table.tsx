@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
 import {
   flexRender,
   getCoreRowModel,
@@ -38,10 +39,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+
 import { Badge } from '@/components/ui/badge'
 import { DetailExaminationModal } from './detail-examination-modal'
 import { deleteExamination } from '@/app/actions/examination-actions'
@@ -52,6 +52,7 @@ interface HistoryTableProps {
 }
 
 export function HistoryTable({ data }: HistoryTableProps) {
+  const router = useRouter()
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [selectedExamine, setSelectedExamine] = React.useState<any | null>(null)
@@ -89,13 +90,20 @@ export function HistoryTable({ data }: HistoryTableProps) {
       header: 'Diagnosis',
       cell: ({ row }) => {
         const value = row.getValue('hasil_klasifikasi') as string
-        const isNormal = value?.toLowerCase() === 'normal'
+        const lowerValue = value?.toLowerCase() || ''
+        const isNormal = lowerValue === 'normal'
+        const isHyper = lowerValue.includes('hyper')
+        const isHypo = lowerValue.includes('hypo')
+        
+        let colorClass = 'text-blue-500 bg-blue-500/5 border-blue-500/20'
+        if (isNormal) colorClass = 'text-emerald-500 bg-emerald-500/5 border-emerald-500/20'
+        else if (isHyper) colorClass = 'text-rose-500 bg-rose-500/5 border-rose-500/20'
+        else if (isHypo) colorClass = 'text-amber-500 bg-amber-500/5 border-amber-500/20'
+
         return (
           <Badge 
             variant="outline" 
-            className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-              isNormal ? 'text-emerald-500 bg-emerald-500/5 border-emerald-500/20' : 'text-rose-500 bg-rose-500/5 border-rose-500/20'
-            }`}
+            className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${colorClass}`}
           >
             {value}
           </Badge>
@@ -121,40 +129,42 @@ export function HistoryTable({ data }: HistoryTableProps) {
     },
     {
       id: 'actions',
+      header: 'Aksi',
       cell: ({ row }) => {
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-purple-100/50 text-purple-600 rounded-full">
-                <HugeiconsIcon icon={MoreVerticalCircle01Icon} className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-card/80 backdrop-blur-xl border-border/50 rounded-xl shadow-2xl">
-              <DropdownMenuLabel className="text-xs text-muted-foreground">Opsi Pemeriksaan</DropdownMenuLabel>
-              <DropdownMenuItem 
-                className="gap-2 cursor-pointer focus:bg-purple-50 focus:text-purple-600"
-                onClick={() => {
-                  setSelectedExamine(row.original)
-                  setIsModalOpen(true)
-                }}
-              >
-                <HugeiconsIcon icon={EyeIcon} className="h-4 w-4" /> Lihat Detail
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                className="gap-2 cursor-pointer focus:bg-rose-50 focus:text-rose-600 text-rose-500"
-                onClick={async () => {
-                  if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                    const res = await deleteExamination(row.original.id)
-                    if (res.success) toast.success('Data berhasil dihapus')
-                    else toast.error(res.error)
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="h-8 w-8 hover:bg-purple-100/50 text-purple-600 rounded-full"
+              title="Lihat Detail"
+              onClick={() => {
+                setSelectedExamine(row.original)
+                setIsModalOpen(true)
+              }}
+            >
+              <HugeiconsIcon icon={EyeIcon} className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="h-8 w-8 hover:bg-rose-100/50 text-rose-600 rounded-full"
+              title="Hapus Data"
+              onClick={async () => {
+                if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                  const res = await deleteExamination(row.original.id)
+                  if (res.success) {
+                    toast.success('Data berhasil dihapus')
+                    router.refresh()
+                  } else {
+                    toast.error(res.error)
                   }
-                }}
-              >
-                <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" /> Hapus Data
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                }
+              }}
+            >
+              <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
+            </Button>
+          </div>
         )
       },
     },
@@ -175,6 +185,32 @@ export function HistoryTable({ data }: HistoryTableProps) {
     },
   })
 
+  const exportToCSV = () => {
+    const rows = table.getFilteredRowModel().rows
+    const headers = ['Tanggal', 'Waktu', 'Nama Pasien', 'Diagnosis', 'Confidence']
+    
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => {
+        const date = new Date(row.original.created_at).toLocaleDateString('id-ID')
+        const time = new Date(row.original.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+        const name = `"${row.original.pasien?.nama || 'Anonim'}"`
+        const diagnosis = row.original.hasil_klasifikasi
+        const confidence = ((row.getValue('confidence') as number) * 100).toFixed(1) + '%'
+        return [date, time, name, diagnosis, confidence].join(',')
+      })
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `riwayat_tiroid_${new Date().toISOString().split('T')[0]}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
@@ -190,11 +226,26 @@ export function HistoryTable({ data }: HistoryTableProps) {
           />
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="rounded-2xl h-11 border-none shadow-sm bg-card/30 gap-2">
-            <HugeiconsIcon icon={FilterIcon} className="h-4 w-4" />
-            Filter
-          </Button>
-          <Button variant="outline" className="rounded-2xl h-11 border-none shadow-sm bg-card/30">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="rounded-2xl h-11 border-none shadow-sm bg-card/30 gap-2">
+                <HugeiconsIcon icon={FilterIcon} className="h-4 w-4" />
+                Filter
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 rounded-xl bg-card/80 backdrop-blur-xl border-border/50">
+              <DropdownMenuItem onClick={() => table.getColumn('hasil_klasifikasi')?.setFilterValue('')}>Semua Diagnosis</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => table.getColumn('hasil_klasifikasi')?.setFilterValue('Normal')}>Normal</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => table.getColumn('hasil_klasifikasi')?.setFilterValue('Hyperthyroid')}>Hyperthyroid</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => table.getColumn('hasil_klasifikasi')?.setFilterValue('Hypothyroid')}>Hypothyroid</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          <Button 
+            onClick={exportToCSV}
+            variant="outline" 
+            className="rounded-2xl h-11 border-none shadow-sm bg-card/30 hover:bg-purple-500/10 hover:text-purple-600 transition-colors"
+          >
             Export CSV
           </Button>
         </div>

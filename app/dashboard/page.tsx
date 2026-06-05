@@ -1,7 +1,7 @@
 import { getDashboardStats } from '@/app/actions/dashboard-actions'
 import { DashboardStatsClient } from '@/components/dashboard-stats-client'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { HospitalIcon, ActivityIcon } from '@hugeicons/core-free-icons'
+import { ActivityIcon } from '@hugeicons/core-free-icons'
 
 export default async function DashboardPage() {
   const { data: stats, error } = await getDashboardStats()
@@ -32,13 +32,7 @@ export default async function DashboardPage() {
           </p>
         </div>
 
-        <div className="hidden md:flex items-center gap-3 p-4 bg-purple-500/5 rounded-2xl border border-purple-500/10">
-          <HugeiconsIcon icon={HospitalIcon} className="h-5 w-5 text-purple-500" />
-          <div className="text-xs">
-            <div className="font-bold">Klinik Tiroid Utama</div>
-            <div className="text-muted-foreground">Sistem Aktif • {new Date().toLocaleDateString('id-ID')}</div>
-          </div>
-        </div>
+
       </div>
 
       <DashboardStatsClient stats={stats} />

@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { 
   DashboardCircleIcon, 
-  UserGroupIcon, 
   MedicalFileIcon, 
   Settings02Icon, 
   Database01Icon,
@@ -18,7 +17,6 @@ import { motion } from 'framer-motion'
 const navigation = [
   { name: 'Beranda', href: '/dashboard', icon: DashboardCircleIcon },
   { name: 'Prediksi Baru', href: '/dashboard/predict', icon: MedicalFileIcon },
-  { name: 'Data Pasien', href: '/dashboard/patients', icon: UserGroupIcon },
   { name: 'Riwayat Medis', href: '/dashboard/history', icon: Database01Icon },
   { name: 'Pengaturan', href: '/dashboard/settings', icon: Settings02Icon },
 ]

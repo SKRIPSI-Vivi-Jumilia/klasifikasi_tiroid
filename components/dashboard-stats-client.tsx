@@ -49,13 +49,6 @@ export function DashboardStatsClient({ stats }: DashboardStatsClientProps) {
       {/* Stats Cards Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard 
-          title="Total Pasien" 
-          value={totalPatients} 
-          icon={UserGroupIcon} 
-          trend="+2 Baru" 
-          color="purple" 
-        />
-        <StatCard 
           title="Total Pemeriksaan" 
           value={totalExams} 
           icon={MedicalFileIcon} 
@@ -70,11 +63,18 @@ export function DashboardStatsClient({ stats }: DashboardStatsClientProps) {
           color="emerald" 
         />
         <StatCard 
-          title="Butuh Atensi" 
-          value={categoryCounts.hyper + categoryCounts.hypo} 
+          title="Hipertiroid" 
+          value={categoryCounts.hyper} 
           icon={Alert01Icon} 
-          trend="Segera Hubungi" 
+          trend="Butuh Atensi" 
           color="amber" 
+        />
+        <StatCard 
+          title="Hipotiroid" 
+          value={categoryCounts.hypo} 
+          icon={Alert01Icon} 
+          trend="Butuh Atensi" 
+          color="rose" 
         />
       </div>
 
@@ -190,6 +190,7 @@ function StatCard({ title, value, icon, trend, color }: any) {
     blue: 'from-blue-500/20 to-blue-500/5 text-blue-500',
     emerald: 'from-emerald-500/20 to-emerald-500/5 text-emerald-500',
     amber: 'from-amber-500/20 to-amber-500/5 text-amber-500',
+    rose: 'from-rose-500/20 to-rose-500/5 text-rose-500',
   }
 
   return (

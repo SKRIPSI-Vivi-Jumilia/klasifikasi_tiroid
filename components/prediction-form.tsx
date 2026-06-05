@@ -34,7 +34,6 @@ const formSchema = z.object({
   tsh: z.coerce.number().min(0),
   t3: z.coerce.number().min(0),
   tt4: z.coerce.number().min(0),
-  t4u: z.coerce.number().min(0),
   fti: z.coerce.number().min(0),
 })
 
@@ -156,14 +155,10 @@ export function PredictionForm({ onSuccess }: PredictionFormProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="tt4">TT4</Label>
                   <Input id="tt4" type="number" step="0.01" {...register('tt4')} className="bg-background/50" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="t4u">T4U</Label>
-                  <Input id="t4u" type="number" step="0.01" {...register('t4u')} className="bg-background/50" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="fti">FTI</Label>

@@ -10,7 +10,6 @@ export type PredictionData = {
   tsh: number
   t3: number
   tt4: number
-  t4u: number
   fti: number
 }
 
@@ -40,22 +39,32 @@ export async function predictThyroid(data: PredictionData) {
   // Save to Supabase
   const supabase = await createClient()
   
-  // 1. Create or find patient
-  // For simplicity in this step, we'll just focus on the prediction logic
-  // and saving the examination record.
+  // 1. Create patient record
+  const { data: newPatient, error: patientError } = await supabase
+    .from('pasien')
+    .insert({
+      nama: data.nama_pasien,
+      jenis_kelamin: data.jenis_kelamin,
+      tanggal_lahir: new Date(new Date().getFullYear() - data.umur, 0, 1).toISOString(),
+    })
+    .select()
+    .single()
+
+  if (patientError) {
+    console.error('Error creating patient:', patientError)
+    return { error: 'Gagal membuat data pasien' }
+  }
   
-  // Let's assume we create a guest/temporary record if no patient_id provided
-  // In a full app, we'd look up the patient first.
-  
+  // 2. Save examination record linked to the patient
   const { data: examination, error } = await supabase
     .from('pemeriksaan')
     .insert({
+      pasien_id: newPatient.id,
       umur: data.umur,
       jenis_kelamin: data.jenis_kelamin,
       tsh: data.tsh,
       t3: data.t3,
       tt4: data.tt4,
-      t4u: data.t4u,
       fti: data.fti,
       hasil_klasifikasi: diagnosis,
       confidence: confidence
@@ -69,6 +78,7 @@ export async function predictThyroid(data: PredictionData) {
   }
 
   revalidatePath('/dashboard')
+  revalidatePath('/dashboard/history')
   
   return {
     success: true,
