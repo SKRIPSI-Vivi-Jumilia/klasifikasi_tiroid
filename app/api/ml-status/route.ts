@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 export async function GET() {
-  const mlApiUrl = process.env.ML_API_URL || 'http://127.0.0.1:5000'
+  const mlApiUrl = process.env.ML_API_URL || 'https://vivijumilia-model-xgboost.hf.space'
   try {
     const response = await fetch(`${mlApiUrl}/health`, {
       method: 'GET',
