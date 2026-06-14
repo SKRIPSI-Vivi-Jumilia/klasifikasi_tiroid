@@ -3,23 +3,26 @@
 import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { 
-  StatusIcon, 
+import {
+  StatusIcon,
   LeftToRightListDashIcon
 } from '@hugeicons/core-free-icons'
 
-import { PredictionForm } from '@/components/prediction-form'
-import { PredictionResultDisplay } from '@/components/prediction-result'
-import { PredictionResult } from '@/app/actions/prediction'
+import { PredictionForm } from '@/components/prediction-form' //form input data pasien (input prediksi)
+import { PredictionResultDisplay } from '@/components/prediction-result' //komponen output hasil prediksi
+import { PredictionResult } from '@/app/actions/prediction' //
 
-export default function PredictPage() {
-  const [result, setResult] = React.useState<PredictionResult | null>(null)
+// =====================================================
+// HALAMAN PREDIKSI
+// =====================================================
+export default function PredictPage() { //State untuk menyimpan hasil prediksi 
+  const [result, setResult] = React.useState<PredictionResult | null>(null) //Awalnya null karena belum ada prediksi
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-20">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="space-y-1"
@@ -36,7 +39,7 @@ export default function PredictPage() {
           </p>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-4"
@@ -56,6 +59,7 @@ export default function PredictPage() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4 }}
               >
+                {/* saat tombol analisis sekarang ditekan : Sform akan mengumpulkan data */}
                 <PredictionForm onSuccess={setResult} />
               </motion.div>
             ) : (
@@ -76,7 +80,7 @@ export default function PredictPage() {
         <div className="lg:col-span-4 space-y-6">
 
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
@@ -87,8 +91,8 @@ export default function PredictPage() {
               <h3 className="font-bold">Panduan Parameter</h3>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              - <strong>TSH</strong>: mU/L <br/>
-              - <strong>T3/TT4</strong>: nmol/L <br/>
+              - <strong>TSH</strong>: mU/L <br />
+              - <strong>T3/TT4</strong>: nmol/L <br />
               - <strong>FTI</strong>: Index
             </p>
           </motion.div>

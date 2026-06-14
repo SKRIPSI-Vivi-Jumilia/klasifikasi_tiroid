@@ -3,9 +3,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
+// ======================================================
+// FUNGSI MENGHAPUS DATA PEMERIKSAAN
+// ======================================================
 export async function deleteExamination(id: string) {
   const supabase = await createClient()
 
+  // Menghapus data pada tabel pemeriksaan
+  // berdasarkan id yang dipilih
   const { error } = await supabase
     .from('pemeriksaan')
     .delete()
@@ -16,12 +21,15 @@ export async function deleteExamination(id: string) {
     return { error: 'Gagal menghapus data pemeriksaan' }
   }
 
-  revalidatePath('/dashboard/history')
+  revalidatePath('/dashboard/history') // Memperbarui halaman history agar data terbaru tampil
   revalidatePath('/dashboard')
-  
+
   return { success: true }
 }
 
+// ======================================================
+// FUNGSI MENGAMBIL SELURUH DATA PEMERIKSAAN
+// ======================================================
 export async function getExaminations() {
   const supabase = await createClient()
 
@@ -43,18 +51,22 @@ export async function getExaminations() {
   return { success: true, data }
 }
 
+// ======================================================
+// FUNGSI MENGAMBIL DATA PASIEN
+// ======================================================
 export async function getPatients() {
   const supabase = await createClient()
 
+  // Mengambil data pasien
   const { data, error } = await supabase
     .from('pasien')
-    .select('*')
-    .order('nama', { ascending: true })
+    .select('*')    // Mengambil semua kolom
+    .order('nama', { ascending: true }) // Mengurutkan data berdasarkan abjad
 
   if (error) {
     console.error('Error fetching patients:', error)
     return { error: 'Gagal mengambil data pasien' }
   }
 
-  return { success: true, data }
+  return { success: true, data } // Mengirim data pasien ke frontend
 }

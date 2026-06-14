@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export type PredictionData = {
+export type PredictionData = { // Mendefinisikan struktur data yang akan dikirim
   nama_pasien: string
   umur: number
   jenis_kelamin: 'L' | 'P'
@@ -13,25 +13,30 @@ export type PredictionData = {
   fti: number
 }
 
-export type PredictionResult = {
+export type PredictionResult = { // Mendefinisikan tipedata hasil prediksi
   diagnosis: string
   confidence: number
   timestamp: string
 }
 
-export async function predictThyroid(data: PredictionData) {
+// ======================================================
+// FUNGSI PREDIKSI PENYAKIT TIROID
+// ======================================================
+export async function predictThyroid(data: PredictionData) { // Menerima data pasien
+  // Nilai default jika prediksi gagal
   let diagnosis = 'Normal'
   let confidence = 0.95
 
+  // mengirim data ke API FLASK
   try {
     const response = await fetch('http://127.0.0.1:5000/predict', {
-      method: 'POST',
-      headers: {
+      method: 'POST', // Menggunakan metode POST
+      headers: {      // Mengirim header dengan tipe data JSON
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        age: data.umur,
-        sex: data.jenis_kelamin === 'L' ? 1 : 0,
+        age: data.umur, // Mengirim data umur
+        sex: data.jenis_kelamin === 'L' ? 1 : 0, // Mengubah jenis kelamin menjadi 1 atau 0
         TSH: data.tsh,
         T3: data.t3,
         TT4: data.tt4,
@@ -39,27 +44,31 @@ export async function predictThyroid(data: PredictionData) {
       }),
     })
 
+    // Jika API mengembalikan error, tampilkan pesan error
     if (!response.ok) {
       const errText = await response.text()
       console.error('Flask API error response:', errText)
       return { error: 'Gagal memproses prediksi dari server Machine Learning' }
     }
 
+    // Mengambil data dari Flask API
     const resData = await response.json()
     if (resData.error) {
       return { error: `Model Error: ${resData.error}` }
     }
 
-    diagnosis = resData.result // "Normal" | "Hipotiroid" | "Hipertiroid"
-    confidence = resData.confidence
+    diagnosis = resData.result // menyimpan hasil klasifikasi "Normal" | "Hipotiroid" | "Hipertiroid"
+    confidence = resData.confidence // menyimpan nilai kecocokan model  
   } catch (apiErr) {
     console.error('Error connecting to Flask API:', apiErr)
     return { error: 'Gagal menghubungi server Machine Learning. Pastikan server BE ML aktif.' }
   }
 
-  // Save to Supabase
+  // =================================================
+  // MENYIMPAN HASIL KE SUPABASE
+  // =================================================
   const supabase = await createClient()
-  
+
   // 1. Create patient record
   const { data: newPatient, error: patientError } = await supabase
     .from('pasien')
@@ -75,12 +84,12 @@ export async function predictThyroid(data: PredictionData) {
     console.error('Error creating patient:', patientError)
     return { error: 'Gagal membuat data pasien' }
   }
-  
-  // 2. Save examination record linked to the patient
+
+  // 2. Simpan catatan pemeriksaan yang terkait dengan pasien
   const { data: examination, error } = await supabase
     .from('pemeriksaan')
-    .insert({
-      pasien_id: newPatient.id,
+    .insert({ //   Memasukkan data ke tabel pemeriksaan 
+      pasien_id: newPatient.id, // ID pasien yang baru dibuat
       umur: data.umur,
       jenis_kelamin: data.jenis_kelamin,
       tsh: data.tsh,
@@ -98,9 +107,11 @@ export async function predictThyroid(data: PredictionData) {
     return { error: 'Gagal menyimpan hasil pemeriksaan' }
   }
 
+  // Memperbarui halaman dashboard dan history
   revalidatePath('/dashboard')
   revalidatePath('/dashboard/history')
-  
+
+  //Mengirim data hasil prediksi ke frontend
   return {
     success: true,
     data: {

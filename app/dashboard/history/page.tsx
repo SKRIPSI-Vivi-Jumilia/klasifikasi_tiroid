@@ -1,10 +1,14 @@
-import { getExaminations } from '@/app/actions/examination-actions'
-import { HistoryTable } from '@/components/history-table'
-import { HugeiconsIcon } from '@hugeicons/react'
-import { Database01Icon } from '@hugeicons/core-free-icons'
+//halaman Riwayat Pemeriksaan
+import { getExaminations } from '@/app/actions/examination-actions' //Mengimpor fungsi untuk mengambil data pemeriksaan
+import { HistoryTable } from '@/components/history-table' // Mengimpor komponen tabel riwayat pemeriksaan
+import { HugeiconsIcon } from '@hugeicons/react' // Mengimpor ikon dari Hugeicons
+import { Database01Icon } from '@hugeicons/core-free-icons' //Mengimpor ikon dari Hugeicons 
 
-export default async function HistoryPage() {
-  const { data = [], error } = await getExaminations()
+// =====================================================
+// HALAMAN RIWAYAT PEMERIKSAAN
+// =====================================================
+export default async function HistoryPage() { // mengambil seluruh data pemeriksaan
+  const { data = [], error } = await getExaminations() //dari server action examination-actions
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-20">
@@ -23,7 +27,7 @@ export default async function HistoryPage() {
       </div>
 
 
-
+      {/* Menampilkan data riwayat pemeriksaan */}
       <HistoryTable data={data || []} />
     </div>
   )
