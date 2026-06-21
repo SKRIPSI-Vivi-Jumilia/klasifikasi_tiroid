@@ -50,7 +50,7 @@ export async function getDashboardStats() {
         created_at,
         hasil_klasifikasi,
         confidence,
-        pasien:id_pasien (nama)
+        pasien (nama)
       `)
       .order('created_at', { ascending: false })
       .limit(5)

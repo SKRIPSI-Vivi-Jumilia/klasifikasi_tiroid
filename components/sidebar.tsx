@@ -10,23 +10,31 @@ import {
   Settings02Icon, 
   Database01Icon,
   Logout01Icon,
-  HospitalIcon
+  HospitalIcon,
+  Folder01Icon
 } from '@hugeicons/core-free-icons'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-const navigation = [
-  { name: 'Beranda', href: '/dashboard', icon: DashboardCircleIcon },
-  { name: 'Prediksi Baru', href: '/dashboard/predict', icon: MedicalFileIcon },
-  { name: 'Riwayat Medis', href: '/dashboard/history', icon: Database01Icon },
-]
-
-export function Sidebar() {
+export function Sidebar({ role = 'user' }: { role?: string }) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+
+  const baseNavigation = [
+    { name: 'Beranda', href: '/dashboard', icon: DashboardCircleIcon },
+    { name: 'Prediksi Baru', href: '/dashboard/predict', icon: MedicalFileIcon },
+    { name: 'Riwayat Medis', href: '/dashboard/history', icon: Database01Icon },
+  ]
+
+  const navigation = role === 'admin' 
+    ? [
+        ...baseNavigation,
+        { name: 'Master Data', href: '/dashboard/master-data', icon: Folder01Icon },
+      ]
+    : baseNavigation
 
   const handleLogout = async () => {
     try {

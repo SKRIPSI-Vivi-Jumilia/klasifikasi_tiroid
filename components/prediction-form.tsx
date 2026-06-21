@@ -190,6 +190,7 @@ export function PredictionForm({ onSuccess, apiStatus }: PredictionFormProps) {
                 <Input 
                   id="nama_pasien" 
                   placeholder="Contoh: Budi Santoso" 
+                  required
                   {...register('nama_pasien')}
                   className="bg-background/50"
                 />
@@ -201,7 +202,8 @@ export function PredictionForm({ onSuccess, apiStatus }: PredictionFormProps) {
                   <Label htmlFor="umur">Umur</Label>
                   <Input 
                     id="umur" 
-                    type="number" 
+                    type="number"
+                    required
                     {...register('umur')}
                     className="bg-background/50"
                   />
@@ -235,12 +237,12 @@ export function PredictionForm({ onSuccess, apiStatus }: PredictionFormProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="tsh">TSH</Label>
-                  <Input id="tsh" type="number" step="0.01" {...register('tsh')} className="bg-background/50" />
+                  <Input id="tsh" type="number" step="0.01" required {...register('tsh')} className="bg-background/50" />
                   {errors.tsh && <p className="text-xs text-destructive">{errors.tsh.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="t3">T3</Label>
-                  <Input id="t3" type="number" step="0.01" {...register('t3')} className="bg-background/50" />
+                  <Input id="t3" type="number" step="0.01" required {...register('t3')} className="bg-background/50" />
                   {errors.t3 && <p className="text-xs text-destructive">{errors.t3.message}</p>}
                 </div>
               </div>
@@ -248,11 +250,11 @@ export function PredictionForm({ onSuccess, apiStatus }: PredictionFormProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="tt4">TT4</Label>
-                  <Input id="tt4" type="number" step="0.01" {...register('tt4')} className="bg-background/50" />
+                  <Input id="tt4" type="number" step="0.01" required {...register('tt4')} className="bg-background/50" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="fti">FTI</Label>
-                  <Input id="fti" type="number" step="0.01" {...register('fti')} className="bg-background/50" />
+                  <Input id="fti" type="number" step="0.01" required {...register('fti')} className="bg-background/50" />
                 </div>
               </div>
             </div>

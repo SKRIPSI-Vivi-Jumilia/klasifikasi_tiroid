@@ -7,18 +7,26 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { 
   DashboardCircleIcon, 
   MedicalFileIcon, 
-  Database01Icon 
+  Database01Icon,
+  Folder01Icon
 } from '@hugeicons/core-free-icons'
 import { motion } from 'framer-motion'
 
-const navigation = [
-  { name: 'Beranda', href: '/dashboard', icon: DashboardCircleIcon },
-  { name: 'Prediksi', href: '/dashboard/predict', icon: MedicalFileIcon },
-  { name: 'Riwayat', href: '/dashboard/history', icon: Database01Icon },
-]
-
-export function MobileNav() {
+export function MobileNav({ role = 'user' }: { role?: string }) {
   const pathname = usePathname()
+
+  const baseNavigation = [
+    { name: 'Beranda', href: '/dashboard', icon: DashboardCircleIcon },
+    { name: 'Prediksi', href: '/dashboard/predict', icon: MedicalFileIcon },
+    { name: 'Riwayat', href: '/dashboard/history', icon: Database01Icon },
+  ]
+
+  const navigation = role === 'admin'
+    ? [
+        ...baseNavigation,
+        { name: 'Master', href: '/dashboard/master-data', icon: Folder01Icon },
+      ]
+    : baseNavigation
 
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md lg:hidden no-print">

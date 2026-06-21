@@ -186,30 +186,64 @@ export function HistoryTable({ data }: HistoryTableProps) {
   })
 
   const exportToCSV = () => {
-    const rows = table.getFilteredRowModel().rows
-    const headers = ['Tanggal', 'Waktu', 'Nama Pasien', 'Diagnosis', 'Confidence']
-    
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => {
-        const date = new Date(row.original.created_at).toLocaleDateString('id-ID')
-        const time = new Date(row.original.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
-        const name = `"${row.original.pasien?.nama || 'Anonim'}"`
-        const diagnosis = row.original.hasil_klasifikasi
-        const confidence = ((row.getValue('confidence') as number) * 100).toFixed(1) + '%'
-        return [date, time, name, diagnosis, confidence].join(',')
-      })
-    ].join('\n')
+  const rows = table.getFilteredRowModel().rows
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', `riwayat_tiroid_${new Date().toISOString().split('T')[0]}.csv`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
+  const headers = [
+    'Tanggal',
+    'Waktu',
+    'Nama Pasien',
+    'Umur',
+    'Jenis Kelamin',
+    'TSH',
+    'T3',
+    'TT4',
+    'FTI',
+    'Diagnosis',
+    'Confidence'
+  ]
+
+  const csvContent = [
+    headers.join(','),
+    ...rows.map((row) => {
+      const date = new Date(row.original.created_at).toLocaleDateString('id-ID')
+      const time = new Date(row.original.created_at).toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+
+      return [
+        date,
+        time,
+        `"${row.original.pasien?.nama ?? 'Anonim'}"`,
+        row.original.umur ?? '',
+        row.original.jenis_kelamin ?? '',
+        row.original.tsh ?? '',
+        row.original.t3 ?? '',
+        row.original.tt4 ?? '',
+        row.original.fti ?? '',
+        row.original.hasil_klasifikasi ?? '',
+        `${((Number(row.original.confidence) || 0) * 100).toFixed(1)}%`
+      ].join(',')
+    })
+  ].join('\n')
+
+  const blob = new Blob([csvContent], {
+    type: 'text/csv;charset=utf-8;'
+  })
+
+  const url = URL.createObjectURL(blob)
+
+  const link = document.createElement('a')
+  link.href = url
+  link.setAttribute(
+    'download',
+    `riwayat_tiroid_${new Date().toISOString().split('T')[0]}.csv`
+  )
+
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
 
   return (
     <div className="space-y-4">
