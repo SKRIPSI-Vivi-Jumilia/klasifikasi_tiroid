@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server' // Mengimpor NextResponse untuk mengirim response JSON  
 
 export async function GET() {
+  const mlApiUrl = process.env.ML_API_URL || 'https://vivijumilia-model-xgboost.hf.space'
   try {
     //mengirim permintaan ke Flask API
-    const response = await fetch('http://127.0.0.1:5000/health', { // endpoint 
-      method: 'GET', // Menggunakan metode GET
-      // timeout 3 detik agar UI tidak menunggu terlalu lama
+    const response = await fetch(`${mlApiUrl}/health`, {
+      method: 'GET',
+      // Short timeout so the UI doesn't hang 
       signal: AbortSignal.timeout(3000),
     })
 

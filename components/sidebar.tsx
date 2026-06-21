@@ -13,16 +13,32 @@ import {
   HospitalIcon
 } from '@hugeicons/core-free-icons'
 import { motion } from 'framer-motion'
+import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 const navigation = [
   { name: 'Beranda', href: '/dashboard', icon: DashboardCircleIcon },
   { name: 'Prediksi Baru', href: '/dashboard/predict', icon: MedicalFileIcon },
   { name: 'Riwayat Medis', href: '/dashboard/history', icon: Database01Icon },
-  { name: 'Pengaturan', href: '/dashboard/settings', icon: Settings02Icon },
 ]
 
 export function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const supabase = createClient()
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+      toast.success('Berhasil keluar dari sistem')
+      router.push('/login')
+      router.refresh()
+    } catch (err: any) {
+      toast.error('Gagal keluar: ' + err.message)
+    }
+  }
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-72 border-r border-sidebar-border bg-sidebar/50 backdrop-blur-xl hidden lg:block">
@@ -71,7 +87,10 @@ export function Sidebar() {
         </nav>
 
         <div className="mt-auto border-t border-sidebar-border pt-6 px-2">
-          <button className="w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive rounded-2xl transition-all duration-200 group">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive rounded-2xl transition-all duration-200 group"
+          >
             <HugeiconsIcon icon={Logout01Icon} className="h-5 w-5 text-muted-foreground group-hover:text-destructive" />
             Keluar Sistem
           </button>

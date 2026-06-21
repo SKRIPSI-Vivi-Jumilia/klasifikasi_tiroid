@@ -26,12 +26,13 @@ export async function predictThyroid(data: PredictionData) { // Menerima data pa
   // Nilai default jika prediksi gagal
   let diagnosis = 'Normal'
   let confidence = 0.95
+  const mlApiUrl = process.env.ML_API_URL || 'https://vivijumilia-model-xgboost.hf.space'
 
   // mengirim data ke API FLASK
   try {
-    const response = await fetch('http://127.0.0.1:5000/predict', {
-      method: 'POST', // Menggunakan metode POST
-      headers: {      // Mengirim header dengan tipe data JSON
+    const response = await fetch(`${mlApiUrl}/predict`, {
+      method: 'POST',
+      headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -54,11 +55,28 @@ export async function predictThyroid(data: PredictionData) { // Menerima data pa
     // Mengambil data dari Flask API
     const resData = await response.json()
     if (resData.error) {
+      console.error('Model Error response:', resData.error)
       return { error: `Model Error: ${resData.error}` }
     }
 
     diagnosis = resData.result // menyimpan hasil klasifikasi "Normal" | "Hipotiroid" | "Hipertiroid"
     confidence = resData.confidence // menyimpan nilai kecocokan model  
+
+
+    // Print output to terminal log as requested
+    console.log('=== DATA PREDIKSI DARI ML API ===')
+    console.log('Nama Pasien   :', data.nama_pasien)
+    console.log('Umur          :', data.umur)
+    console.log('Jenis Kelamin :', data.jenis_kelamin)
+    console.log('TSH           :', data.tsh)
+    console.log('T3            :', data.t3)
+    console.log('TT4           :', data.tt4)
+    console.log('FTI           :', data.fti)
+    console.log('---------------------------------')
+    console.log('Hasil Model   :', diagnosis)
+    console.log('Confidence    :', confidence)
+    console.log('=================================')
+
   } catch (apiErr) {
     console.error('Error connecting to Flask API:', apiErr)
     return { error: 'Gagal menghubungi server Machine Learning. Pastikan server BE ML aktif.' }

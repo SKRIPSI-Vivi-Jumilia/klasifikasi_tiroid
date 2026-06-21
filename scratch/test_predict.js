@@ -9,7 +9,7 @@ async function testPrediction() {
   };
 
   try {
-    const response = await fetch('http://127.0.0.1:5000/predict', {
+    const response = await fetch('https://vivijumilia-model-xgboost.hf.space/predict', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
