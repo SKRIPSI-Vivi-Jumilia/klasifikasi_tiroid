@@ -77,7 +77,7 @@ export function PredictionResultDisplay({ result, onReset }: PredictionResultDis
               transition={{ delay: 0.2 }}
             >
               <Badge variant="outline" className={`mb-4 px-4 py-1 text-xs font-bold uppercase tracking-widest ${getColorClass()}`}>
-                Hasil Klasifikasi AI
+                Hasil Klasifikasi
               </Badge>
               <h2 className="text-5xl font-black mb-4 tracking-tighter text-foreground">
                 {result.diagnosis}

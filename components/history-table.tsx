@@ -13,8 +13,8 @@ import {
   type SortingState,
   type ColumnFiltersState,
 } from '@tanstack/react-table'
-import { 
-  MoreVerticalCircle01Icon, 
+import {
+  MoreVerticalCircle01Icon,
   Search01Icon,
   EyeIcon,
   Delete02Icon,
@@ -53,27 +53,31 @@ interface HistoryTableProps {
 
 export function HistoryTable({ data }: HistoryTableProps) {
   const router = useRouter()
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [selectedExamine, setSelectedExamine] = React.useState<any | null>(null)
-  const [isModalOpen, setIsModalOpen] = React.useState(false)
+  const [sorting, setSorting] = React.useState<SortingState>([])   // STATE untuk sorting tabel
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])  // STATE untuk filter kolom
+  const [selectedExamine, setSelectedExamine] = React.useState<any | null>(null)  // STATE untuk data yang dipilih saat klik "view detail"
+  const [isModalOpen, setIsModalOpen] = React.useState(false)  // STATE untuk buka/tutup modal detail
 
   const columns: ColumnDef<any>[] = [
     {
+      // start Kolom tanggal dan waktu pemeriksaan
       accessorKey: 'created_at',
       header: 'Tanggal',
       cell: ({ row }) => (
         <div className="flex flex-col">
+          {/* Format tanggal */}
           <span className="font-medium">
             {new Date(row.original.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
           </span>
+          {/* Format jam */}
           <span className="text-[10px] text-muted-foreground uppercase">
             {new Date(row.original.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB
           </span>
         </div>
       ),
-    },
-    {
+    },//end
+
+    { //start kolom nama pasien
       accessorKey: 'pasien.nama',
       header: 'Pasien',
       cell: ({ row }) => (
@@ -84,57 +88,64 @@ export function HistoryTable({ data }: HistoryTableProps) {
           <span className="font-semibold text-sm">{row.original.pasien?.nama || 'Anonim'}</span>
         </div>
       ),
-    },
-    {
+    },//end
+
+    { //start kolom hasil klasifikasi (diagnosis)
       accessorKey: 'hasil_klasifikasi',
       header: 'Diagnosis',
       cell: ({ row }) => {
         const value = row.getValue('hasil_klasifikasi') as string
         const lowerValue = value?.toLowerCase() || ''
+        // Deteksi jenis diagnosis
         const isNormal = lowerValue === 'normal'
         const isHyper = lowerValue.includes('hyper') || lowerValue.includes('hiper')
         const isHypo = lowerValue.includes('hypo') || lowerValue.includes('hipo')
-        
+
         let colorClass = 'text-blue-500 bg-blue-500/5 border-blue-500/20'
+        // Warna berdasarkan kondisi
         if (isNormal) colorClass = 'text-emerald-500 bg-emerald-500/5 border-emerald-500/20'
         else if (isHyper) colorClass = 'text-rose-500 bg-rose-500/5 border-rose-500/20'
         else if (isHypo) colorClass = 'text-amber-500 bg-amber-500/5 border-amber-500/20'
 
         return (
-          <Badge 
-            variant="outline" 
+          <Badge
+            variant="outline"
             className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${colorClass}`}
           >
             {value}
           </Badge>
         )
       },
-    },
-    {
+    },//end
+
+    { //start kolom confidence
       accessorKey: 'confidence',
       header: 'Confidence',
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-purple-500 rounded-full" 
+            <div
+              className="h-full bg-purple-500 rounded-full"
               style={{ width: `${(row.getValue('confidence') as number) * 100}%` }}
             />
           </div>
+          {/* Persentase confidence */}
           <span className="text-xs font-medium">
             {((row.getValue('confidence') as number) * 100).toFixed(1)}%
           </span>
         </div>
       ),
-    },
-    {
+    }, //end
+
+    { //start kolom aksi (view & delete)
       id: 'actions',
       header: 'Aksi',
       cell: ({ row }) => {
         return (
           <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
+            {/* Button lihat detail */}
+            <Button
+              variant="ghost"
               size="icon"
               className="h-8 w-8 hover:bg-purple-100/50 text-purple-600 rounded-full"
               title="Lihat Detail"
@@ -145,8 +156,9 @@ export function HistoryTable({ data }: HistoryTableProps) {
             >
               <HugeiconsIcon icon={EyeIcon} className="h-4 w-4" />
             </Button>
-            <Button 
-              variant="ghost" 
+            {/* Button hapus data */}
+            <Button
+              variant="ghost"
               size="icon"
               className="h-8 w-8 hover:bg-rose-100/50 text-rose-600 rounded-full"
               title="Hapus Data"
@@ -167,7 +179,7 @@ export function HistoryTable({ data }: HistoryTableProps) {
           </div>
         )
       },
-    },
+    }, //end
   ]
 
   const table = useReactTable({
@@ -185,65 +197,67 @@ export function HistoryTable({ data }: HistoryTableProps) {
     },
   })
 
+
+  // =========================
+  // EXPORT DATA KE CSV
+  // =========================
   const exportToCSV = () => {
-  const rows = table.getFilteredRowModel().rows
+    const rows = table.getFilteredRowModel().rows
 
-  const headers = [
-    'Tanggal',
-    'Waktu',
-    'Nama Pasien',
-    'Umur',
-    'Jenis Kelamin',
-    'TSH',
-    'T3',
-    'TT4',
-    'FTI',
-    'Diagnosis',
-    'Confidence'
-  ]
+    const headers = [
+      'Tanggal',
+      'Waktu',
+      'Nama Pasien',
+      'Umur',
+      'Jenis Kelamin',
+      'TSH',
+      'T3',
+      'TT4',
+      'FTI',
+      'Diagnosis',
+      'Confidence'
+    ]
 
-  const csvContent = [
-    headers.join(','),
-    ...rows.map((row) => {
-      const date = new Date(row.original.created_at).toLocaleDateString('id-ID')
-      const time = new Date(row.original.created_at).toLocaleTimeString('id-ID', {
-        hour: '2-digit',
-        minute: '2-digit'
+    const csvContent = [
+      headers.join(','),
+      ...rows.map((row) => {
+        const date = new Date(row.original.created_at).toLocaleDateString('id-ID')
+        const time = new Date(row.original.created_at).toLocaleTimeString('id-ID', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+
+        return [
+          date,
+          time,
+          `"${row.original.pasien?.nama ?? 'Anonim'}"`,
+          row.original.umur ?? '',
+          row.original.jenis_kelamin ?? '',
+          row.original.tsh ?? '',
+          row.original.t3 ?? '',
+          row.original.tt4 ?? '',
+          row.original.fti ?? '',
+          row.original.hasil_klasifikasi ?? '',
+          `${((Number(row.original.confidence) || 0) * 100).toFixed(1)}%`
+        ].join(',')
       })
+    ].join('\n')
 
-      return [
-        date,
-        time,
-        `"${row.original.pasien?.nama ?? 'Anonim'}"`,
-        row.original.umur ?? '',
-        row.original.jenis_kelamin ?? '',
-        row.original.tsh ?? '',
-        row.original.t3 ?? '',
-        row.original.tt4 ?? '',
-        row.original.fti ?? '',
-        row.original.hasil_klasifikasi ?? '',
-        `${((Number(row.original.confidence) || 0) * 100).toFixed(1)}%`
-      ].join(',')
-    })
-  ].join('\n')
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })   // buat file CSV
 
-  const blob = new Blob([csvContent], {
-    type: 'text/csv;charset=utf-8;'
-  })
+    const url = URL.createObjectURL(blob)
 
-  const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute(
+      'download',
+      `riwayat_tiroid_${new Date().toISOString().split('T')[0]}.csv`
+    )
 
-  const link = document.createElement('a')
-  link.href = url
-  link.setAttribute(
-    'download',
-    `riwayat_tiroid_${new Date().toISOString().split('T')[0]}.csv`
-  )
-
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-}
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
 
   return (
     <div className="space-y-4">
@@ -274,10 +288,10 @@ export function HistoryTable({ data }: HistoryTableProps) {
               <DropdownMenuItem onClick={() => table.getColumn('hasil_klasifikasi')?.setFilterValue('Hipotiroid')}>Hipotiroid</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          
-          <Button 
+
+          <Button
             onClick={exportToCSV}
-            variant="outline" 
+            variant="outline"
             className="rounded-2xl h-11 border-none shadow-sm bg-card/30 hover:bg-purple-500/10 hover:text-purple-600 transition-colors"
           >
             Export CSV
@@ -295,9 +309,9 @@ export function HistoryTable({ data }: HistoryTableProps) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -361,10 +375,10 @@ export function HistoryTable({ data }: HistoryTableProps) {
         </div>
       </div>
 
-      <DetailExaminationModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        examination={selectedExamine} 
+      <DetailExaminationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        examination={selectedExamine}
       />
     </div>
   )

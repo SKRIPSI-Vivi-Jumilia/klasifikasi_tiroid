@@ -63,7 +63,7 @@ export default function LoginPage() {
             <Hospital className="h-10 w-10 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight text-center">
-            ThyroScan AI
+            Thyroid Classification
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2 text-center">
             Sistem Informasi Klasifikasi Penyakit Tiroid
@@ -71,8 +71,8 @@ export default function LoginPage() {
         </div>
 
         <Card className="border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl shadow-2xl">
-          <CardHeader>
-            <CardTitle className="text-xl text-slate-900 dark:text-white">Login Petugas Medis</CardTitle>
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl text-slate-900 dark:text-white">Login</CardTitle>
             <CardDescription className="text-slate-500 dark:text-slate-400">
               Masukkan email dan password untuk mengakses dashboard.
             </CardDescription>
@@ -130,7 +130,7 @@ export default function LoginPage() {
                 </Link>
               </div>
               <p className="text-xs text-center text-slate-400 dark:text-slate-500">
-                Lupa password? Silakan hubungi admin sistem IT Rumah Sakit.
+                Lupa password? Silakan hubungi admin sistem
               </p>
             </CardFooter>
           </form>

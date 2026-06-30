@@ -26,7 +26,7 @@ export function Sidebar({ role = 'user' }: { role?: string }) {
   const baseNavigation = [
     { name: 'Beranda', href: '/dashboard', icon: DashboardCircleIcon },
     { name: 'Prediksi Baru', href: '/dashboard/predict', icon: MedicalFileIcon },
-    { name: 'Riwayat Medis', href: '/dashboard/history', icon: Database01Icon },
+    { name: 'Riwayat Pemeriksaan', href: '/dashboard/history', icon: Database01Icon },
   ]
 
   const navigation = role === 'admin' 
@@ -56,7 +56,7 @@ export function Sidebar({ role = 'user' }: { role?: string }) {
             <HugeiconsIcon icon={HospitalIcon} className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-foreground tracking-tight">ThyroScan</h2>
+            <h2 className="text-xl font-bold text-foreground tracking-tight">Thyroid Classification</h2>
             <p className="text-[10px] text-purple-400 font-medium uppercase tracking-widest">Medical Intelligence</p>
           </div>
         </div>

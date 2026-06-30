@@ -20,7 +20,9 @@ import {
   CheckCircle,
   Database,
   Search,
-  Activity
+  Activity,
+  Upload,
+  RefreshCcw
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -31,7 +33,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import { toggleUserStatus, changeUserRole } from '@/app/actions/user-actions'
-import { upsertReferenceValue, deleteReferenceValue } from '@/app/actions/master-data-actions'
+import { upsertReferenceValue, deleteReferenceValue, addModelConfig } from '@/app/actions/master-data-actions'
 
 interface MasterDataClientProps {
   users: any[]
@@ -55,6 +57,16 @@ export function MasterDataClient({ users, references, modelConfigs }: MasterData
     nilai_max: '',
     satuan: ''
   })
+
+  // Model Training State
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [isTraining, setIsTraining] = useState(false)
+  const [trainingResult, setTrainingResult] = useState<{
+    accuracy: number
+    precision: number
+    recall: number
+    f1_score: number
+  } | null>(null)
 
   // Handlers for User Management
   const handleToggleStatus = async (userId: string, currentStatus: string) => {
@@ -155,6 +167,67 @@ export function MasterDataClient({ users, references, modelConfigs }: MasterData
     user.email?.toLowerCase().includes(searchUser.toLowerCase())
   )
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0])
+      setTrainingResult(null)
+    }
+  }
+
+  const handleStartTraining = async () => {
+    if (!selectedFile) {
+      toast.error('Harap pilih file dataset (.csv)')
+      return
+    }
+
+    setIsTraining(true)
+    setTrainingResult(null)
+    
+    try {
+      const formData = new FormData()
+      formData.append('file', selectedFile)
+
+      const response = await fetch('http://localhost:5000/train-model', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error('Gagal melakukan training model')
+      }
+
+      const data = await response.json()
+      
+      if (data.success) {
+        setTrainingResult({
+          accuracy: data.accuracy,
+          precision: data.precision,
+          recall: data.recall,
+          f1_score: data.f1_score
+        })
+        
+        toast.success('Model berhasil diperbarui')
+
+        const currentVersion = modelConfigs.length > 0 ? parseFloat(modelConfigs[0].versi.replace('v', '')) : 0
+        const newVersion = `v${(currentVersion + 0.1).toFixed(1)}`
+
+        await addModelConfig({
+          versi: newVersion,
+          akurasi: data.accuracy
+        })
+        
+        setSelectedFile(null)
+        router.refresh()
+      } else {
+        throw new Error(data.error || 'Terjadi kesalahan saat training')
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Gagal terhubung ke server Flask')
+    } finally {
+      setIsTraining(false)
+    }
+  }
+
   return (
     <div className="space-y-6 pb-20">
       {/* Page Header */}
@@ -182,7 +255,9 @@ export function MasterDataClient({ users, references, modelConfigs }: MasterData
           <Users className="h-4 w-4" />
           Pengguna
         </button>
-        <button
+
+        {/* start button menu lab referensi */}
+        {/* <button
           onClick={() => setActiveTab('references')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-xs font-black uppercase tracking-wider rounded-xl transition-all ${
             activeTab === 'references'
@@ -192,7 +267,9 @@ export function MasterDataClient({ users, references, modelConfigs }: MasterData
         >
           <Dna className="h-4 w-4" />
           Lab Referensi
-        </button>
+        </button> */}
+        {/* end button menu lab refrensi */}
+
         <button
           onClick={() => setActiveTab('model')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-xs font-black uppercase tracking-wider rounded-xl transition-all ${
@@ -348,7 +425,8 @@ export function MasterDataClient({ users, references, modelConfigs }: MasterData
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.2 }}
             >
-              <Card className="border-none shadow-2xl bg-card/30 backdrop-blur-xl">
+              {/* start isi menu lab referensi */}
+              {/* <Card className="border-none shadow-2xl bg-card/30 backdrop-blur-xl">
                 <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
                     <CardTitle className="text-xl font-bold flex items-center gap-2">
@@ -419,7 +497,8 @@ export function MasterDataClient({ users, references, modelConfigs }: MasterData
                     </Table>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
+              {/* end isi menu halaman lab refrensi */}
 
               {/* Add/Edit Modal */}
               <Dialog open={isOpenRefDialog} onOpenChange={setIsOpenRefDialog}>
@@ -580,7 +659,7 @@ export function MasterDataClient({ users, references, modelConfigs }: MasterData
                   </CardContent>
                 </Card>
 
-                {/* Status Server Flask */}
+                {/* Status Server Flask master data */}
                 <Card className="border-none shadow-2xl bg-card/30 backdrop-blur-xl">
                   <CardHeader>
                     <CardTitle className="text-xl font-bold flex items-center gap-2">
@@ -613,7 +692,87 @@ export function MasterDataClient({ users, references, modelConfigs }: MasterData
                     </div>
                   </CardContent>
                 </Card>
+                {/* end card server ml aktif */}
               </div>
+
+              {/* Re-Training Model */}
+              <Card className="border-none shadow-2xl bg-card/30 backdrop-blur-xl mt-6">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold flex items-center gap-2">
+                    <RefreshCcw className={`h-5 w-5 text-purple-500 ${isTraining ? 'animate-spin' : ''}`} />
+                    Re-Training Model
+                  </CardTitle>
+                  <CardDescription>Upload dataset CSV terbaru untuk melatih ulang model XGBoost.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex flex-col md:flex-row gap-4 items-end">
+                    <div className="flex-1 space-y-2 w-full">
+                      <Label htmlFor="dataset">Upload Dataset (.csv)</Label>
+                      <Input 
+                        id="dataset" 
+                        type="file" 
+                        accept=".csv" 
+                        onChange={handleFileChange}
+                        disabled={isTraining}
+                        className="bg-background/50 border-border/50 text-sm cursor-pointer"
+                      />
+                      {selectedFile && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          File terpilih: <span className="font-bold">{selectedFile.name}</span> ({(selectedFile.size / 1024).toFixed(1)} KB)
+                        </p>
+                      )}
+                    </div>
+                    <Button 
+                      onClick={handleStartTraining} 
+                      disabled={!selectedFile || isTraining}
+                      className="w-full md:w-auto bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-wider py-5 rounded-xl shadow-lg shadow-purple-500/20"
+                    >
+                      {isTraining ? (
+                        <>
+                          <RefreshCcw className="h-4 w-4 mr-2 animate-spin" />
+                          Memproses...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-4 w-4 mr-2" />
+                          Mulai Training
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  {trainingResult && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl space-y-4"
+                    >
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-5 w-5 text-emerald-500" />
+                        <h4 className="font-bold text-emerald-500">Model berhasil diperbarui</h4>
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="bg-background/50 p-4 rounded-xl border border-border/50">
+                          <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider block mb-1">Accuracy</span>
+                          <span className="text-xl font-black text-foreground">{(trainingResult.accuracy * 100).toFixed(2)}%</span>
+                        </div>
+                        <div className="bg-background/50 p-4 rounded-xl border border-border/50">
+                          <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider block mb-1">Precision</span>
+                          <span className="text-xl font-black text-foreground">{(trainingResult.precision * 100).toFixed(2)}%</span>
+                        </div>
+                        <div className="bg-background/50 p-4 rounded-xl border border-border/50">
+                          <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider block mb-1">Recall</span>
+                          <span className="text-xl font-black text-foreground">{(trainingResult.recall * 100).toFixed(2)}%</span>
+                        </div>
+                        <div className="bg-background/50 p-4 rounded-xl border border-border/50">
+                          <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider block mb-1">F1 Score</span>
+                          <span className="text-xl font-black text-foreground">{(trainingResult.f1_score * 100).toFixed(2)}%</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </CardContent>
+              </Card>
 
               {/* Version History Table */}
               <div className="mt-8">

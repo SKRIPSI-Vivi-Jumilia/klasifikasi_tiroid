@@ -78,3 +78,35 @@ export async function getModelConfig() {
 
   return { data, error: error?.message }
 }
+
+// 5. Add Model Configuration
+export async function addModelConfig(data: {
+  versi: string
+  akurasi: number
+}) {
+  const supabase = await createClient()
+
+  // Set all existing models to inactive
+  await supabase
+    .from('konfigurasi_model')
+    .update({ aktif: false })
+    .eq('aktif', true)
+
+  // Insert new model
+  const payload = {
+    versi: data.versi,
+    akurasi: data.akurasi,
+    tanggal_training: new Date().toISOString(),
+    aktif: true
+  }
+
+  const { error } = await supabase
+    .from('konfigurasi_model')
+    .insert([payload])
+
+  if (!error) {
+    revalidatePath('/dashboard/master-data')
+  }
+
+  return { success: !error, error: error?.message }
+}

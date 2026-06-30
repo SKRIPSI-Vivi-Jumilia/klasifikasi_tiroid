@@ -77,8 +77,8 @@ export default function RegisterPage() {
         </div>
 
         <Card className="border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl shadow-2xl">
-          <CardHeader>
-            <CardTitle className="text-xl text-slate-900 dark:text-white">Buat Akun Medis</CardTitle>
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl text-slate-900 dark:text-white">Buat Akun</CardTitle>
             <CardDescription className="text-slate-500 dark:text-slate-400">
               Lengkapi data di bawah ini untuk mulai menggunakan sistem.
             </CardDescription>
@@ -86,11 +86,11 @@ export default function RegisterPage() {
           <form onSubmit={handleRegister}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName" className="text-slate-700 dark:text-slate-300">Nama Lengkap (beserta gelar)</Label>
+                <Label htmlFor="fullName" className="text-slate-700 dark:text-slate-300">Nama Lengkap</Label>
                 <Input
                   id="fullName"
                   type="text"
-                  placeholder="dr. John Doe, Sp.PD"
+                  placeholder="Muhammad Ali"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required

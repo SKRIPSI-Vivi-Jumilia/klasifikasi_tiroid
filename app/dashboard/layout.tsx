@@ -10,18 +10,19 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()   // Mengambil data pengguna yang sedang login
 
-  if (!user) {
+  if (!user) { // Jika pengguna belum login, arahkan ke halaman login
     redirect('/login')
   }
 
-  const { data: profile } = await supabase
+  const { data: profile } = await supabase // Mengambil data profil pengguna dari tabel profiles
     .from('profiles')
     .select('role, full_name, email')
     .eq('id', user.id)
     .single()
 
+  // Menentukan role pengguna, default sebagai user apabila role tidak ditemukan
   const currentRole = profile?.role ?? 'user'
 
   return (

@@ -5,9 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import * as z from 'zod'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { 
-  StatusIcon, 
-  UserGroupIcon, 
+import {
+  StatusIcon,
+  UserGroupIcon,
   CalculatorIcon,
   InformationCircleIcon,
   WifiConnected01Icon,
@@ -18,12 +18,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { predictThyroid, PredictionResult } from '@/app/actions/prediction'
@@ -178,18 +178,18 @@ export function PredictionForm({ onSuccess, apiStatus }: PredictionFormProps) {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity duration-300 ${apiStatus === 'offline' ? 'opacity-50 pointer-events-none' : ''}`}>
-            {/* Informasi Dasar */}
+            {/* start form Informasi Dasar */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-sm font-semibold text-purple-500 uppercase tracking-wider mb-2">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-4 w-4" />
                 Informasi Dasar
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="nama_pasien">Nama Lengkap Pasien</Label>
-                <Input 
-                  id="nama_pasien" 
-                  placeholder="Contoh: Budi Santoso" 
+                <Input
+                  id="nama_pasien"
+                  placeholder="Contoh: Budi Santoso"
                   required
                   {...register('nama_pasien')}
                   className="bg-background/50"
@@ -200,8 +200,8 @@ export function PredictionForm({ onSuccess, apiStatus }: PredictionFormProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="umur">Umur</Label>
-                  <Input 
-                    id="umur" 
+                  <Input
+                    id="umur"
                     type="number"
                     required
                     {...register('umur')}
@@ -211,7 +211,7 @@ export function PredictionForm({ onSuccess, apiStatus }: PredictionFormProps) {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="jenis_kelamin">Jenis Kelamin</Label>
-                  <Select 
+                  <Select
                     defaultValue="L"
                     onValueChange={(value) => setValue('jenis_kelamin', value as 'L' | 'P')}
                   >
@@ -226,8 +226,10 @@ export function PredictionForm({ onSuccess, apiStatus }: PredictionFormProps) {
                 </div>
               </div>
             </div>
+            {/* end form Informasi Dasar */}
 
-            {/* Parameter Lab */}
+
+            {/* start Parameter Lab */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-sm font-semibold text-blue-500 uppercase tracking-wider mb-2">
                 <HugeiconsIcon icon={CalculatorIcon} className="h-4 w-4" />
@@ -257,6 +259,7 @@ export function PredictionForm({ onSuccess, apiStatus }: PredictionFormProps) {
                   <Input id="fti" type="number" step="0.01" required {...register('fti')} className="bg-background/50" />
                 </div>
               </div>
+              {/*end Parameter Lab */}
             </div>
           </div>
 
@@ -267,8 +270,8 @@ export function PredictionForm({ onSuccess, apiStatus }: PredictionFormProps) {
             </p>
           </div>
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full h-12 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
             disabled={isPending || apiStatus !== 'online'}
           >
@@ -289,7 +292,7 @@ export function PredictionForm({ onSuccess, apiStatus }: PredictionFormProps) {
             ) : apiStatus === 'checking' ? (
               'Memeriksa Koneksi...'
             ) : (
-              'Analisis Sekarang'
+              'Klasifikasi'
             )}
           </Button>
         </form>

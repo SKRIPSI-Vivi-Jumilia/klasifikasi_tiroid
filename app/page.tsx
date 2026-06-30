@@ -104,7 +104,7 @@ export default function LandingPage() {
           transition={{ duration: 0.8, delay: 0.1 }}
           className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight max-w-5xl mx-auto leading-[1.1] bg-gradient-to-b from-white via-slate-100 to-slate-500 bg-clip-text text-transparent"
         >
-          Klasifikasi Penyakit Tiroid Akurat dengan Kecerdasan Buatan
+          Klasifikasi Penyakit Tiroid Berbasis XGBoost 
         </motion.h1>
 
         <motion.p
@@ -113,7 +113,7 @@ export default function LandingPage() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-slate-400 text-lg sm:text-xl max-w-3xl mx-auto mt-8 leading-relaxed"
         >
-          Membantu klinisi dan tenaga medis mengidentifikasi kondisi tiroid pasien secara instan, aman, dan presisi menggunakan parameter klinis berbasis data.
+          Membantu masyarakat melakukan skrining awal kondisi tiroid secara cepat dan mudah menggunakan parameter klinis berbasis data.
         </motion.p>
 
         <motion.div
